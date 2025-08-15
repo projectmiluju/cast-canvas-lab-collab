@@ -1,21 +1,32 @@
-node_modules
-dist
-coverage
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+coverage/
+*.tsbuildinfo
+
+# Environment files
 .env
 .env.local
-.pnpm-store
 .env.*
 !.env.example
 !.env.local.example
+
+# Logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-*.tsbuildinfo
-.DS_Store
-.idea
 
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Local agent instructions
 AGENTS.md
 CLAUDE.md
 GEMINI.md
