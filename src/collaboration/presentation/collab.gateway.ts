@@ -1,29 +1,25 @@
-import { Logger } from "@nestjs/common";
+import { Logger } from "@nestjs/common"
 import {
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  WebSocketGateway
-} from "@nestjs/websockets";
-import { RawData, WebSocket } from "ws";
+  type OnGatewayConnection,
+  type OnGatewayDisconnect,
+  WebSocketGateway,
+} from "@nestjs/websockets"
+import { type RawData, WebSocket } from "ws"
 
-import { ApplyDocumentUpdateUseCase } from "../application/apply-document-update.use-case";
-import { AuthenticateConnectionUseCase } from "../application/authenticate-connection.use-case";
-import { BroadcastAwarenessUseCase } from "../application/broadcast-awareness.use-case";
-import { DisconnectConnectionUseCase } from "../application/disconnect-connection.use-case";
-import { JoinRoomUseCase } from "../application/join-room.use-case";
-import {
-  ClientMessage,
-  ErrorMessage,
-  ServerMessage
-} from "./collab-message.types";
-import { CollabMessageType, COLLAB_WS_PATH } from "./protocol.constants";
-import { SocketRegistryService } from "./socket-registry.service";
+import type { ApplyDocumentUpdateUseCase } from "../application/apply-document-update.use-case"
+import type { AuthenticateConnectionUseCase } from "../application/authenticate-connection.use-case"
+import type { BroadcastAwarenessUseCase } from "../application/broadcast-awareness.use-case"
+import type { DisconnectConnectionUseCase } from "../application/disconnect-connection.use-case"
+import type { JoinRoomUseCase } from "../application/join-room.use-case"
+import type { ClientMessage, ErrorMessage, ServerMessage } from "./collab-message.types"
+import { COLLAB_WS_PATH, CollabMessageType } from "./protocol.constants"
+import type { SocketRegistryService } from "./socket-registry.service"
 
 @WebSocketGateway({
-  path: COLLAB_WS_PATH
+  path: COLLAB_WS_PATH,
 })
 export class CollabGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger = new Logger(CollabGateway.name);
+  private readonly logger = new Logger(CollabGateway.name)
 
   constructor(
     private readonly authenticateConnectionUseCase: AuthenticateConnectionUseCase,
@@ -35,49 +31,49 @@ export class CollabGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   handleConnection(client: WebSocket): void {
-    const connectionId = crypto.randomUUID();
-    this.socketRegistryService.register(connectionId, client);
+    const connectionId = crypto.randomUUID()
+    this.socketRegistryService.register(connectionId, client)
 
     client.on("message", (raw: RawData) => {
-      void this.handleRawMessage(client, raw);
-    });
+      void this.handleRawMessage(client, raw)
+    })
   }
 
   async handleDisconnect(client: WebSocket): Promise<void> {
-    const connectionId = this.getConnectionId(client);
+    const connectionId = this.getConnectionId(client)
 
-    await this.disconnectConnectionUseCase.execute(connectionId);
-    this.socketRegistryService.unregister(connectionId);
+    await this.disconnectConnectionUseCase.execute(connectionId)
+    this.socketRegistryService.unregister(connectionId)
   }
 
   private async handleRawMessage(client: WebSocket, raw: RawData): Promise<void> {
-    const message = this.parseMessage(raw);
+    const message = this.parseMessage(raw)
     if (message === null) {
       this.send(client, {
         type: CollabMessageType.Error,
         code: "INVALID_MESSAGE",
-        message: "Expected a valid JSON message payload."
-      });
-      return;
+        message: "Expected a valid JSON message payload.",
+      })
+      return
     }
 
     switch (message.type) {
       case CollabMessageType.Auth:
-        await this.handleAuth(client, message.token);
-        return;
+        await this.handleAuth(client, message.token)
+        return
       case CollabMessageType.Join:
-        await this.handleJoin(client, message.workspaceId, message.documentId);
-        return;
+        await this.handleJoin(client, message.workspaceId, message.documentId)
+        return
       case CollabMessageType.Update:
       case CollabMessageType.Sync:
-        this.handleDocumentUpdate(client, message.update);
-        return;
+        this.handleDocumentUpdate(client, message.update)
+        return
       case CollabMessageType.Awareness:
-        this.handleAwareness(client, message.update);
-        return;
+        this.handleAwareness(client, message.update)
+        return
       case CollabMessageType.Leave:
-        await this.disconnectConnectionUseCase.leaveRoom(this.getConnectionId(client));
-        return;
+        await this.disconnectConnectionUseCase.leaveRoom(this.getConnectionId(client))
+        return
     }
   }
 
@@ -85,17 +81,17 @@ export class CollabGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const auth = await this.authenticateConnectionUseCase.execute(
       this.getConnectionId(client),
       token
-    );
+    )
 
     if (auth !== null) {
-      return;
+      return
     }
 
     this.send(client, {
       type: CollabMessageType.Error,
       code: "UNAUTHORIZED",
-      message: "Authentication failed."
-    });
+      message: "Authentication failed.",
+    })
   }
 
   private async handleJoin(
@@ -105,43 +101,43 @@ export class CollabGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): Promise<void> {
     const result = await this.joinRoomUseCase.execute(this.getConnectionId(client), {
       workspaceId,
-      documentId
-    });
+      documentId,
+    })
 
     if (!result.ok) {
       this.send(client, {
         type: CollabMessageType.Error,
         code: result.code,
-        message: result.message
-      });
-      return;
+        message: result.message,
+      })
+      return
     }
 
-    this.send(client, result.message);
+    this.send(client, result.message)
   }
 
   private handleDocumentUpdate(client: WebSocket, encodedUpdate: string): void {
     const result = this.applyDocumentUpdateUseCase.execute(
       this.getConnectionId(client),
       encodedUpdate
-    );
+    )
 
     if (!result.ok) {
       this.send(client, {
         type: CollabMessageType.Error,
         code: result.code,
-        message: result.message
-      });
-      return;
+        message: result.message,
+      })
+      return
     }
 
     for (const peerId of result.message.peerConnectionIds) {
-      const peer = this.findClientByConnectionId(peerId);
+      const peer = this.findClientByConnectionId(peerId)
       if (peer === null) {
-        continue;
+        continue
       }
 
-      this.send(peer, result.message.message);
+      this.send(peer, result.message.message)
     }
   }
 
@@ -149,51 +145,51 @@ export class CollabGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const result = this.broadcastAwarenessUseCase.execute(
       this.getConnectionId(client),
       encodedUpdate
-    );
+    )
 
     if (!result.ok) {
       this.send(client, {
         type: CollabMessageType.Error,
         code: result.code,
-        message: result.message
-      });
-      return;
+        message: result.message,
+      })
+      return
     }
 
     for (const peerId of result.message.peerConnectionIds) {
-      const peer = this.findClientByConnectionId(peerId);
+      const peer = this.findClientByConnectionId(peerId)
       if (peer === null) {
-        continue;
+        continue
       }
 
-      this.send(peer, result.message.message);
+      this.send(peer, result.message.message)
     }
   }
 
   private parseMessage(raw: RawData): ClientMessage | null {
-    const payload = raw instanceof Buffer ? raw.toString("utf8") : raw.toString();
+    const payload = raw instanceof Buffer ? raw.toString("utf8") : raw.toString()
 
     try {
-      return JSON.parse(payload) as ClientMessage;
+      return JSON.parse(payload) as ClientMessage
     } catch (error) {
-      this.logger.warn(`Failed to parse client message: ${String(error)}`);
-      return null;
+      this.logger.warn(`Failed to parse client message: ${String(error)}`)
+      return null
     }
   }
 
   private send(client: WebSocket, message: ServerMessage | ErrorMessage): void {
     if (client.readyState !== WebSocket.OPEN) {
-      return;
+      return
     }
 
-    client.send(JSON.stringify(message));
+    client.send(JSON.stringify(message))
   }
 
   private getConnectionId(client: WebSocket): string {
-    return this.socketRegistryService.mustGetConnectionId(client);
+    return this.socketRegistryService.mustGetConnectionId(client)
   }
 
   private findClientByConnectionId(connectionId: string): WebSocket | null {
-    return this.socketRegistryService.get(connectionId);
+    return this.socketRegistryService.get(connectionId)
   }
 }

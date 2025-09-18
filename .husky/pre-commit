@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+pnpm run check:branch || exit 1
+pnpm run check:no-secrets || exit 1
+pnpm exec lint-staged || exit 1

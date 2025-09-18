@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common"
 
-import { CollabAuthService } from "../../auth/infrastructure/collab-auth.service";
-import { AuthContext } from "../domain/room.types";
-import { RoomRegistryService } from "../domain/room-registry.service";
+import type { CollabAuthService } from "../../auth/infrastructure/collab-auth.service"
+import type { AuthContext } from "../domain/room.types"
+import type { RoomRegistryService } from "../domain/room-registry.service"
 
 @Injectable()
 export class AuthenticateConnectionUseCase {
@@ -12,13 +12,13 @@ export class AuthenticateConnectionUseCase {
   ) {}
 
   async execute(connectionId: string, token: string): Promise<AuthContext | null> {
-    const auth = await this.authService.validateToken(token);
+    const auth = await this.authService.validateToken(token)
 
     if (auth === null) {
-      return null;
+      return null
     }
 
-    this.roomRegistryService.setAuth(connectionId, auth);
-    return auth;
+    this.roomRegistryService.setAuth(connectionId, auth)
+    return auth
   }
 }

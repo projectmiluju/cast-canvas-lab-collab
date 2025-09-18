@@ -1,25 +1,25 @@
-import { Awareness } from "y-protocols/awareness";
-import * as Y from "yjs";
+import type { Awareness } from "y-protocols/awareness"
+import type * as Y from "yjs"
 
 export interface AuthContext {
-  userId: string;
-  canWrite: boolean;
+  userId: string
+  canWrite: boolean
 }
 
 export interface RoomRef {
-  workspaceId: string;
-  documentId: string;
+  workspaceId: string
+  documentId: string
 }
 
 export interface RoomConnection {
-  connectionId: string;
-  auth: AuthContext | null;
-  roomKey: string | null;
+  connectionId: string
+  auth: AuthContext | null
+  roomKey: string | null
 }
 
 export interface RoomState extends RoomRef {
-  key: string;
-  doc: Y.Doc;
-  awareness: Awareness;
-  connectionIds: Set<string>;
+  key: string
+  doc: Y.Doc
+  awareness: Awareness
+  connectionIds: Set<string>
 }

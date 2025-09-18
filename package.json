@@ -6,11 +6,22 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "check": "biome check .",
+    "check:write": "biome check --write .",
+    "check:branch": "node scripts/check-branch-name.mjs",
+    "check:no-secrets": "node scripts/check-no-secrets.mjs",
     "start": "node dist/main.js",
     "dev": "tsx watch src/main.ts",
+    "format": "biome format --write .",
+    "prepare": "husky",
     "test": "jest --runInBand --forceExit",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage --forceExit"
+  },
+  "lint-staged": {
+    "*.{ts,js,json,md}": [
+      "biome check --write"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -24,14 +35,20 @@
     "yjs": "^13.6.27"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.6",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@nestjs/testing": "^11.1.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
     "@types/ws": "^8.18.1",
+    "husky": "^9.1.7",
     "jest": "^30.0.5",
+    "lint-staged": "^16.3.2",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
-  }
+  },
+  "packageManager": "pnpm@10.30.3"
 }

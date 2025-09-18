@@ -1,39 +1,39 @@
-import { CollabMessageType } from "./protocol.constants";
+import type { CollabMessageType } from "./protocol.constants"
 
 export interface AuthMessage {
-  type: CollabMessageType.Auth;
-  token: string;
+  type: CollabMessageType.Auth
+  token: string
 }
 
 export interface JoinMessage {
-  type: CollabMessageType.Join;
-  workspaceId: string;
-  documentId: string;
+  type: CollabMessageType.Join
+  workspaceId: string
+  documentId: string
 }
 
 export interface SyncMessage {
-  type: CollabMessageType.Sync;
-  update: string;
+  type: CollabMessageType.Sync
+  update: string
 }
 
 export interface UpdateMessage {
-  type: CollabMessageType.Update;
-  update: string;
+  type: CollabMessageType.Update
+  update: string
 }
 
 export interface AwarenessMessage {
-  type: CollabMessageType.Awareness;
-  update: string;
+  type: CollabMessageType.Awareness
+  update: string
 }
 
 export interface LeaveMessage {
-  type: CollabMessageType.Leave;
+  type: CollabMessageType.Leave
 }
 
 export interface ErrorMessage {
-  type: CollabMessageType.Error;
-  code: string;
-  message: string;
+  type: CollabMessageType.Error
+  code: string
+  message: string
 }
 
 export type ClientMessage =
@@ -42,10 +42,6 @@ export type ClientMessage =
   | SyncMessage
   | UpdateMessage
   | AwarenessMessage
-  | LeaveMessage;
+  | LeaveMessage
 
-export type ServerMessage =
-  | SyncMessage
-  | UpdateMessage
-  | AwarenessMessage
-  | ErrorMessage;
+export type ServerMessage = SyncMessage | UpdateMessage | AwarenessMessage | ErrorMessage

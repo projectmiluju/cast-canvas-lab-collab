@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+pnpm run check:branch || exit 1
+pnpm run check || exit 1
+pnpm run test || exit 1
+pnpm run build || exit 1

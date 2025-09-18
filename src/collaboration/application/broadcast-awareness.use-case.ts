@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common"
 
-import { RoomRegistryService } from "../domain/room-registry.service";
-import { AwarenessMessage } from "../presentation/collab-message.types";
-import { CollabMessageType } from "../presentation/protocol.constants";
-import { Result } from "./application-result.types";
+import type { RoomRegistryService } from "../domain/room-registry.service"
+import type { AwarenessMessage } from "../presentation/collab-message.types"
+import { CollabMessageType } from "../presentation/protocol.constants"
+import type { Result } from "./application-result.types"
 
 interface BroadcastAwarenessSuccess {
-  message: AwarenessMessage;
-  peerConnectionIds: string[];
+  message: AwarenessMessage
+  peerConnectionIds: string[]
 }
 
 @Injectable()
@@ -15,22 +15,22 @@ export class BroadcastAwarenessUseCase {
   constructor(private readonly roomRegistryService: RoomRegistryService) {}
 
   execute(connectionId: string, encodedUpdate: string): Result<BroadcastAwarenessSuccess> {
-    const connection = this.roomRegistryService.getConnection(connectionId);
+    const connection = this.roomRegistryService.getConnection(connectionId)
     if (connection?.roomKey === null || connection?.roomKey === undefined) {
       return {
         ok: false,
         code: "ROOM_REQUIRED",
-        message: "Join a room before sending awareness updates."
-      };
+        message: "Join a room before sending awareness updates.",
+      }
     }
 
-    const room = this.roomRegistryService.getRoomByKey(connection.roomKey);
+    const room = this.roomRegistryService.getRoomByKey(connection.roomKey)
     if (room === undefined) {
       return {
         ok: false,
         code: "ROOM_NOT_FOUND",
-        message: "The current room is unavailable."
-      };
+        message: "The current room is unavailable.",
+      }
     }
 
     return {
@@ -38,12 +38,12 @@ export class BroadcastAwarenessUseCase {
       message: {
         message: {
           type: CollabMessageType.Awareness,
-          update: encodedUpdate
+          update: encodedUpdate,
         },
         peerConnectionIds: [...room.connectionIds].filter(
           (peerId) => peerId !== connection.connectionId
-        )
+        ),
       },
-    };
+    }
   }
 }
