@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage --forceExit"
   },
   "lint-staged": {
-    "*.{ts,js,json,md}": [
+    "*.{ts,js,json}": [
       "biome check --write"
     ]
   },
