@@ -1,0 +1,48 @@
+name: Feature Request
+description: Propose a new feature or enhancement
+title: '[FEAT] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What user problem are we solving?
+      placeholder: We need to ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      placeholder: Describe the solution at a high level.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      placeholder: What is intentionally not included?
+    validations:
+      required: true
+
+  - type: input
+    id: branch_name
+    attributes:
+      label: Planned Branch Name
+      description: Must follow `<type>/<issue-number>-<slug>`.
+      placeholder: feat/123-awareness-broadcast
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true

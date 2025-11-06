@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Team Discussion
+    url: https://github.com/projectmiluju/cast-canvas-lab-collab/discussions
+    about: Use Discussions for questions or broad design topics.
