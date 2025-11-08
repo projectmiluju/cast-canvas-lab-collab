@@ -1,22 +1,22 @@
-import { execSync } from "node:child_process"
-import { readFileSync, statSync } from "node:fs"
+import { execSync } from 'node:child_process'
+import { readFileSync, statSync } from 'node:fs'
 
 const MAX_TEXT_FILE_SIZE = 1024 * 1024
-const staged = execSync("git diff --cached --name-only --diff-filter=ACM", {
-  encoding: "utf8",
+const staged = execSync('git diff --cached --name-only --diff-filter=ACM', {
+  encoding: 'utf8',
 })
-  .split("\n")
+  .split('\n')
   .map((file) => file.trim())
   .filter(Boolean)
 
 const blockedPatterns = [
-  { name: "private-key", regex: /BEGIN (RSA|EC|OPENSSH|DSA)? ?PRIVATE KEY/ },
+  { name: 'private-key', regex: /BEGIN (RSA|EC|OPENSSH|DSA)? ?PRIVATE KEY/ },
   {
-    name: "aws-secret-access-key",
+    name: 'aws-secret-access-key',
     regex: /AWS_SECRET_ACCESS_KEY\s*[:=]\s*['"]?[A-Za-z0-9/+=]{16,}['"]?/,
   },
   {
-    name: "generic-api-key",
+    name: 'generic-api-key',
     regex: /(api|secret|access)[_-]?key\s*[:=]\s*['"][A-Za-z0-9_\-]{16,}['"]/i,
   },
 ]
@@ -33,9 +33,9 @@ for (const file of staged) {
     continue
   }
 
-  let content = ""
+  let content = ''
   try {
-    content = readFileSync(file, "utf8")
+    content = readFileSync(file, 'utf8')
   } catch {
     continue
   }
@@ -48,4 +48,4 @@ for (const file of staged) {
   }
 }
 
-console.log("No obvious secrets found in staged files.")
+console.log('No obvious secrets found in staged files.')

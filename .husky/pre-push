@@ -1,6 +1,13 @@
 #!/usr/bin/env sh
 
+current_branch="$(git symbolic-ref --quiet --short HEAD)"
+
+if [ "$current_branch" = "develop" ]; then
+  echo "Direct push to develop is blocked by local pre-push policy."
+  exit 1
+fi
+
 pnpm run check:branch || exit 1
-pnpm run check || exit 1
+pnpm run lint || exit 1
 pnpm run test || exit 1
 pnpm run build || exit 1

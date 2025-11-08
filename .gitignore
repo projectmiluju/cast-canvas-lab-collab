@@ -27,8 +27,8 @@ yarn-error.log*
 .vscode/
 
 # Local agent instructions
-AGENTS.md
 CLAUDE.md
-GEMINI.md
+STATUS.md
 CONTRIBUTING.md
 COLLAB_PROTOCOL.md
+docs/*
