@@ -1,12 +1,15 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CollabPersistenceService {
-  async loadDocumentState(_roomKey: string): Promise<Uint8Array | null> {
-    return null
+  async loadDocumentState(roomKey: string): Promise<Uint8Array | null> {
+    void roomKey;
+    return null;
   }
 
-  async saveDocumentState(_roomKey: string, _state: Uint8Array): Promise<void> {
-    return
+  async saveDocumentState(roomKey: string, state: Uint8Array): Promise<void> {
+    void roomKey;
+    void state;
+    return;
   }
 }
