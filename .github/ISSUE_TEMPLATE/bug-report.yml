@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a reproducible bug
-title: '[BUG] '
+title: '[COLLAB][BUG] '
 labels: ['bug']
 body:
   - type: textarea

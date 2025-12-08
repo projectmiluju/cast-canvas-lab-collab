@@ -1,6 +1,6 @@
 name: Feature Request
 description: Propose a new feature or enhancement
-title: '[FEAT] '
+title: '[COLLAB][FEAT] '
 labels: ['enhancement']
 body:
   - type: textarea
