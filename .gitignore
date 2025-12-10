@@ -27,6 +27,7 @@ yarn-error.log*
 .vscode/
 
 # Local agent instructions
+.codex/
 CLAUDE.md
 STATUS.md
 CONTRIBUTING.md
