@@ -28,6 +28,8 @@ yarn-error.log*
 
 # Local agent instructions
 .codex/
+.claude/
+.gemini/
 CLAUDE.md
 STATUS.md
 CONTRIBUTING.md
